@@ -18,8 +18,8 @@ Definition next_weekday (d : day) : day :=
     | sunday => monday
   end.
 
-Eval simpl in (next_weekday friday). 
-Eval simpl in (next_weekday (next_weekday saturday)). 
+Eval simpl in (next_weekday friday).
+Eval simpl in (next_weekday (next_weekday saturday)).
 
 Example test_next_weekday :
   (next_weekday (next_weekday saturday)) = tuesday.
@@ -32,17 +32,17 @@ Inductive bool : Type :=
 Definition negb (b : bool) : bool :=
   match b with
     | true => false
-    | false => true    
+    | false => true
   end.
 
 Example test_negb1 :
   (negb true) = false.
-Proof. simpl. reflexivity. Qed. 
+Proof. simpl. reflexivity. Qed.
 
 Example test_negb2 :
   (negb false) = true.
 Proof. simpl. reflexivity. Qed.
-  
+
 Definition andb (b1 b2 : bool) : bool :=
   match b1 with
     | true => b2
@@ -55,15 +55,15 @@ Proof. simpl. reflexivity. Qed.
 
 Example test_andb2 :
   (andb true false) = false.
-Proof. simpl. reflexivity. Qed. 
+Proof. simpl. reflexivity. Qed.
 
 Example test_andb3 :
   (andb false true) = false.
-Proof. simpl. reflexivity. Qed. 
+Proof. simpl. reflexivity. Qed.
 
 Example test_andb4 :
   (andb false false) = false.
-Proof. simpl. reflexivity. Qed. 
+Proof. simpl. reflexivity. Qed.
 
 Definition orb (b1 b2 : bool) : bool :=
   match b1 with
@@ -129,11 +129,11 @@ Proof. simpl. reflexivity. Qed.
 Example test_andb34: (andb3 true true false) = false.
 Proof. simpl. reflexivity. Qed.
 
-Check (negb true). 
+Check (negb true).
 Check negb.
 Check andb. (* : bool -> bool -> bool *)
 
-Module Playground1. 
+Module Playground1.
 
   Inductive nat : Type :=
   | O : nat
@@ -180,7 +180,7 @@ Example test_evenb1 :
 Proof. simpl. reflexivity. Qed.
 
 Example test_evenb2 :
-  (evenb (S (S (S O)))) = false. 
+  (evenb (S (S (S O)))) = false.
 Proof. simpl. reflexivity. Qed.
 
 Definition oddb (n : nat) : bool :=
@@ -210,7 +210,7 @@ Module Playground2.
   Example test_plus2 :
     plus O (S (S (S O))) = 3.
   Proof. simpl. reflexivity. Qed.
-  
+
   Fixpoint mult (n m : nat) : nat :=
     match n with
       | O => O
@@ -272,4 +272,69 @@ Example test_factorial2 :
   (factorial 5) = (mult 10 12).
 Proof. simpl. reflexivity. Qed.
 
+Notation "x + y" := (plus x y) (at level 50, left associativity) : nat_scope.
+Notation "x - y" := (minus x y) (at level 50, left associativity) : nat_scope.
+Notation "x * y" := (mult x y) (at level 40, left associativity) : nat_scope.
+
+Example test_notation1 :
+  ((3 + 3) - 1) * 2 = 10.
+Proof. simpl. reflexivity. Qed.
+
+Fixpoint beq_nat (n m : nat) : bool :=
+  match n with
+    | O => match m with
+             | O => true
+             | S m' => false
+           end
+    | S n' => match m with
+                | O => false
+                | S m' => beq_nat n' m'
+              end
+  end.
+
+Example test_beq_nat1 :
+  beq_nat (S (S (S O))) (S (S (S O))) = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_beq_nat2 :
+  beq_nat O (S O) = false.
+Proof. simpl. reflexivity. Qed.
+
+Fixpoint ble_nat (n m : nat) : bool := (* less than equal *)
+  match n with
+    | O => true
+    | S n' => match m with
+                | O => false
+                | S m' => ble_nat n' m'
+              end
+  end.
+
+Example test_ble_nat1 :
+  (ble_nat 2 2) = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_ble_nat2 :
+  (ble_nat 2 4) = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_ble_nat3 :
+  (ble_nat 4 2) = false.
+Proof. simpl. reflexivity. Qed.
+
+(* Exercise blt_nat *)
+
+Definition blt_nat (n m : nat) : bool :=
+  andb (ble_nat n m) (negb (beq_nat n m)).
+
+Example test_blt_nat1 :
+  (blt_nat 2 2) = false.
+Proof. simpl. reflexivity. Qed.
+
+Example test_blt_nat2 :
+  (blt_nat 2 4) = true.
+Proof. simpl. reflexivity. Qed.
+
+Example test_blt_nat3:
+  (blt_nat 4 2) = false.
+Proof. simpl. reflexivity. Qed.
 
