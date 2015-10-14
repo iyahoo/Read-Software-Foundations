@@ -338,3 +338,287 @@ Example test_blt_nat3:
   (blt_nat 4 2) = false.
 Proof. simpl. reflexivity. Qed.
 
+Theorem plus_0_n :
+  forall n : nat, 0 + n = n.
+Proof. reflexivity. Qed.
+
+(* Exercise simpl_plus *)
+
+Eval simpl in (forall n:nat, n + 0 = n).
+(* = forall n : nat, n + 0 = n *)
+(* : Prop *)
+
+Eval simpl in (forall n:nat, 0 + n = n).
+(* = forall n : nat, n = n *)
+(* : Prop *)
+
+Theorem plus_0_n'' :
+  forall n : nat, 0 + n = n.
+Proof. intros n. simpl. reflexivity. Qed.
+
+Theorem plus_1_l :
+  forall n : nat, 1 + n = S n.
+Proof. intros n. simpl. reflexivity. Qed.
+
+Theorem mult_0_l : forall n : nat, 0 * n = 0.
+Proof. intros. simpl. reflexivity. Qed.
+
+Theorem plus_id_example :
+  forall n m : nat,
+    n = m -> n + n = m + m.
+Proof.
+  intros n m.
+  intros H.
+  rewrite -> H.
+  reflexivity.
+Qed.
+
+Theorem plus_id_example' :
+  forall n m : nat,
+    n = m -> n + n = m + m.
+Proof.
+  intros n m.
+  intros H.
+  rewrite <- H.
+  reflexivity.
+Qed.
+
+(* Exercise plus_id_exercise *)
+
+Theorem plus_id_exercise : forall n m o : nat,
+  n = m ->  m = o ->  n + m = m + o.
+Proof.
+  intros n m o.
+  intros H.
+  intros I.
+  rewrite -> H.
+  rewrite <- I.
+  reflexivity.
+Qed.
+
+Theorem mult_0_plus :
+  forall n m : nat,
+    (0 + n) * m = n * m.
+Proof.
+  intros n m.
+  rewrite -> plus_0_n.
+  reflexivity.
+Qed.
+
+Theorem mult_1_plus :
+  forall n m : nat,
+    (1 + n) * m = m + (n * m).
+Proof.
+  intros n m.
+  rewrite -> plus_1_l.
+  simpl. reflexivity.
+Qed.
+
+Theorem plus_1_neq_0_firsttry :
+  forall n : nat,
+    beq_nat (n + 1) 0 = false.
+Proof.
+  intros n.
+  simpl.
+  Admitted.
+
+Theorem plus_1_neq_0 :
+  forall n : nat,
+    beq_nat (n + 1) 0 = false.
+Proof.
+  intros n.
+  destruct n as [| n'].
+  simpl. reflexivity.
+  simpl. reflexivity.
+Qed.
+
+Theorem negb_involutive :
+  forall b : bool,
+    negb (negb b) = b.
+Proof.
+  intros b.
+  destruct b.
+  simpl. reflexivity.
+  simpl. reflexivity.
+Qed.
+
+(* Exercise zero_nbeq_plus_1 *)
+
+Theorem zero_nbeq_plus_1 :
+  forall n : nat,
+    beq_nat 0 (n + 1) = false.
+Proof.
+  intros n.
+  destruct n as [| n'].
+  simpl. reflexivity.
+  simpl. reflexivity.
+Qed.
+
+Require String.
+Open Scope string_scope.
+
+Ltac move_to_top x :=
+  match reverse goal with
+    | H : _ |- _ => try move x after H
+  end.
+
+Tactic Notation "assert_eq" ident(x) constr(v) :=
+  let H := fresh in
+  assert (x = v) as H by reflexivity;
+    clear H.
+
+Tactic Notation "Case_aux" ident(x) constr(name) :=
+  first [
+      set (x := name); move_to_top x
+    | assert_eq x name; move_to_top x
+    | fail 1 "because we are working on a different case" ].
+
+Tactic Notation "Case" constr(name) := Case_aux Case name.
+Tactic Notation "SCase" constr(name) := Case_aux SCase name.
+Tactic Notation "SSCase" constr(name) := Case_aux SSCase name.
+Tactic Notation "SSSCase" constr(name) := Case_aux SSSCase name.
+Tactic Notation "SSSSCase" constr(name) := Case_aux SSSSCase name.
+Tactic Notation "SSSSSCase" constr(name) := Case_aux SSSSSCase name.
+Tactic Notation "SSSSSSCase" constr(name) := Case_aux SSSSSSCase name.
+Tactic Notation "SSSSSSSCase" constr(name) := Case_aux SSSSSSSCase name.
+
+Theorem andb_true_elim1 :
+  forall b c : bool,
+    andb b c = true -> b = true.
+
+Proof.
+  intros b c H.
+  destruct b.
+  Case "b = true".
+    reflexivity.
+  Case "b = false".
+    rewrite <- H.
+    simpl.
+    reflexivity.
+Qed.
+
+(* Exercise andb_true_elim2 *)
+
+Theorem andb_true_elim2 :
+  forall b c : bool,
+    andb b c = true -> c = true.
+Proof.
+  intros b c H.
+  destruct c.
+  Case "c = true".
+    reflexivity.
+  Case "c = false".
+    rewrite <- H.
+    destruct b.
+    SCase "b = true".
+      simpl. reflexivity.
+    SCase "b = false".
+      simpl. reflexivity.
+Qed.
+
+Theorem plus_0_r_firsttry :
+  forall n : nat,
+    n + 0 = n.
+Proof.
+  intros n.
+  destruct n as [| n'].
+  simpl. reflexivity.
+  simpl.
+  Admitted.
+
+Theorem plus_0_r_secondtry :
+  forall n : nat,
+    n + 0 = n.
+Proof.
+  intros n. destruct n as [| n'].
+  Case "n = 0".
+    reflexivity.
+  Case "n = S n'".
+    simpl. Admitted.
+
+Theorem plus_0_r :
+  forall n : nat,
+    n + 0 = n.
+Proof.
+  intros n.
+  induction n as [| n'].
+  Case "n = 0".
+    reflexivity.
+    Case "n = S n'".
+      simpl. rewrite -> IHn'.
+      reflexivity.
+Qed.
+
+(* Exercise. basic_induction. *)
+
+Theorem mult_0_r :
+  forall n : nat,
+    n * 0 = 0.
+Proof.
+  intros n.
+  induction n as [| n'].
+  Case "n = 0".
+    simpl. reflexivity.
+  Case "n = S n'".
+    simpl. rewrite -> IHn'.
+    reflexivity.
+Qed.
+
+Theorem plus_n_Sm :
+  forall n m : nat,
+    S (n + m) = n + (S m).
+Proof.
+  intros n m.
+  induction n as [| n'].
+  Case "n = 0".
+    simpl. reflexivity.
+  Case "n = S n'".
+    simpl. rewrite -> IHn'.
+    reflexivity.
+Qed.
+
+Theorem plus_comm :
+  forall n m : nat,
+    n + m = m + n.
+Proof.
+  intros n m.
+  induction n as [| n'].
+  Case "n = 0".
+    simpl. rewrite -> plus_0_r.
+    reflexivity.
+  Case "n = S n'".
+    simpl. rewrite -> IHn'.
+    rewrite -> plus_n_Sm.
+    reflexivity.
+Qed.
+
+Fixpoint double (n : nat) :=
+  match n with
+    | O => O
+    | S n' => S (S (double n'))
+  end.
+
+(* Exercise. double_plus. *)
+
+Lemma double_plus :
+  forall n : nat,
+    double n = n + n.
+Proof.
+  intros n.
+  induction n as [| n'].
+  Case "n = 0".
+    simpl. reflexivity.
+  Case "n = S n'".
+    simpl.
+    rewrite -> IHn'.
+    rewrite <- plus_n_Sm.
+    reflexivity.
+Qed.
+
+(* Exercise destruct_induction. *)
+
+(* destruct と induction の違いを短く説明しなさい. *)
+
+(* destruct は全ての場合を網羅することで証明できる場合に用いる. Induction は再帰的に証明しなければ証明できない場合に用いる. *)
+
+(*** 形式的証明と非形式的証明 ***)
