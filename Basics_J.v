@@ -516,25 +516,25 @@ Proof.
       simpl. reflexivity.
 Qed.
 
-Theorem plus_0_r_firsttry :
-  forall n : nat,
-    n + 0 = n.
-Proof.
-  intros n.
-  destruct n as [| n'].
-  simpl. reflexivity.
-  simpl.
-  Admitted.
+(* Theorem plus_0_r_firsttry : *)
+(*   forall n : nat, *)
+(*     n + 0 = n. *)
+(* Proof. *)
+(*   intros n. *)
+(*   destruct n as [| n']. *)
+(*   simpl. reflexivity. *)
+(*   simpl. *)
+(*   Admitted. *)
 
-Theorem plus_0_r_secondtry :
-  forall n : nat,
-    n + 0 = n.
-Proof.
-  intros n. destruct n as [| n'].
-  Case "n = 0".
-    reflexivity.
-  Case "n = S n'".
-    simpl. Admitted.
+(* Theorem plus_0_r_secondtry : *)
+(*   forall n : nat, *)
+(*     n + 0 = n. *)
+(* Proof. *)
+(*   intros n. destruct n as [| n']. *)
+(*   Case "n = 0". *)
+(*     reflexivity. *)
+(*   Case "n = S n'". *)
+(*     simpl. Admitted. *)
 
 Theorem plus_0_r :
   forall n : nat,
@@ -549,7 +549,7 @@ Proof.
       reflexivity.
 Qed.
 
-(* Exercise. basic_induction. *)
+(* Exercise basic_induction. *)
 
 Theorem mult_0_r :
   forall n : nat,
@@ -598,7 +598,7 @@ Fixpoint double (n : nat) :=
     | S n' => S (S (double n'))
   end.
 
-(* Exercise. double_plus. *)
+(* Exercise double_plus. *)
 
 Lemma double_plus :
   forall n : nat,
