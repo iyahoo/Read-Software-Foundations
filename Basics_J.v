@@ -622,3 +622,10 @@ Qed.
 (* destruct は全ての場合を網羅することで証明できる場合に用いる. Induction は任意の数の証明などの再帰的に証明しなければ証明できない場合に用いる. *)
 
 (*** 形式的証明と非形式的証明 ***)
+
+Theorem plus_assoc' :
+  forall n m p : nat,
+    n + (m + p) = (n + m) + p.
+Proof. intros n m p. induction n as [| n']. reflexivity.
+       simpl. rewrite -> IHn'. reflexivity. Qed.
+
